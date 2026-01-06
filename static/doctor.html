@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Bootstrap Admin App + jQuery">
+  <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+  
+
+  <title>Hospital Management System - Doctors</title>
+  <link rel="icon" type="image/png" href="app/img/favicon.png">
+
+  <!-- =============== VENDOR STYLES ===============-->
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="vendor/animate.css/animate.min.css">
+  <link rel="stylesheet" href="vendor/whirl/dist/whirl.css">
+  <link rel="stylesheet" href="vendor/sweetalert/dist/sweetalert.css">
+
+  <!-- DATATABLES -->
+  <link rel="stylesheet" href="vendor/datatables-colvis/css/dataTables.colVis.css">
+  <link rel="stylesheet" href="vendor/datatables/media/css/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="vendor/dataTables.fontAwesome/index.css">
+
+  <!-- BOOTSTRAP + APP -->
+  <link rel="stylesheet" href="app/css/bootstrap.css" id="bscss">
+  <link rel="stylesheet" href="app/css/app.css" id="maincss">
+
+  <style>
+    a:hover { text-decoration: none !important; }
+
+    .page-bg{
+      background: linear-gradient(135deg, #eff6ff 0%, #ecfdf5 100%);
+      min-height: calc(100vh - 115px);
+      padding: 18px 0 26px;
+    }
+
+    .hero-panel {
+      border: 0 !important;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    .hero-top {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #ef4444 0%, #2563eb 100%);
+      color: #fff;
+      position: relative;
+      z-index: 0;
+    }
+    .hero-top:after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:220px;
+      height:220px;
+      background: radial-gradient(circle, rgba(255,255,255,.25), transparent 60%);
+      transform: rotate(20deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-top .row,
+    .hero-top .hero-actions,
+    .hero-top .hero-title,
+    .hero-top .hero-sub {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title{ margin:0; font-weight: 900; letter-spacing: .2px; }
+    .hero-sub{ margin: 6px 0 0; opacity: .92; }
+    .hero-actions{ margin-top: 6px; text-align: right; }
+
+    .btn-modern{
+      border-radius: 12px !important;
+      padding: 10px 14px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+    }
+
+    .btn-back-big{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 18px !important;
+      font-size: 16px !important;
+      font-weight: 900 !important;
+      border-radius: 14px !important;
+      background: #1d4ed8 !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,.35) !important;
+      box-shadow: 0 12px 22px rgba(29,78,216,.28);
+    }
+    .btn-back-big:hover,
+    .btn-back-big:focus{
+      background: #1e40af !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+
+    .table-card{
+      border:0 !important;
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      overflow: hidden;
+      background: #fff;
+    }
+    .table-card-head{
+      padding: 14px 18px;
+      border-bottom: 1px solid #eef2f7;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .table-card-head h4{
+      margin:0;
+      font-weight: 900;
+      color:#111827;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .table-hint{
+      color:#6b7280;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    table.dataTable thead th{
+      background: #f8fafc;
+      color:#111827;
+      font-weight: 900;
+      border-bottom: 1px solid #eef2f7 !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter input{
+      border-radius: 12px !important;
+      border: 1px solid #e5e7eb !important;
+      padding: 8px 10px !important;
+      outline: none;
+    }
+    .dataTables_wrapper .dataTables_length select{
+      border-radius: 12px !important;
+      border: 1px solid #e5e7eb !important;
+      padding: 6px 8px !important;
+    }
+    .pagination>li>a, .pagination>li>span{
+      border-radius: 10px !important;
+      margin: 0 2px;
+    }
+
+    .modal-content{
+      border-radius: 18px;
+      overflow: hidden;
+      border: 0;
+      box-shadow: 0 18px 40px rgba(0,0,0,.20);
+    }
+    .modal-header{
+      background: linear-gradient(135deg, #2563eb 0%, #ef4444 100%);
+      color: #fff;
+      border-bottom: 0;
+    }
+    .modal-title{ font-weight: 900; letter-spacing: .2px; }
+    .modal-footer{ border-top: 1px solid #eef2f7; background: #fff; }
+    .form-control, textarea.form-control{
+      border-radius: 12px !important;
+      border: 1px solid #e5e7eb;
+      box-shadow: none !important;
+    }
+    .control-label{ font-weight: 800; color:#111827; }
+  </style>
+</head>
+
+<body class="layout-h">
+<div class="wrapper">
+  <header class="topbar">
+  <div class="container-fluid">
+    <a href="index.html" class="brand-logo">
+      <img src="app/img/logo.png" class="brand-icon" alt="Hospital Management System">
+      <div class="brand-text">
+        <div class="brand-title">
+          <span class="t-blue">Hospital</span>
+          <span class="t-green">Management</span>
+          <span class="t-gray">System</span>
+        </div>
+        <div class="brand-sub">AI Health Assessment &amp; Triage</div>
+      </div>
+    </a>
+  </div>
+</header>
+
+
+  <section>
+    <div class="content-wrapper">
+
+      <div class="page-bg">
+        <div class="container-fluid">
+
+          <div class="panel hero-panel">
+            <div class="hero-top">
+              <div class="row">
+                <div class="col-sm-7">
+                  <h2 class="hero-title"><i class="fa fa-user-md"></i> Doctors</h2>
+                  <p class="hero-sub">Add, edit, and manage doctor information.</p>
+                </div>
+
+                <div class="col-sm-5 hero-actions">
+                  <a href="index.html" class="btn btn-back-big">
+                    <i class="fa fa-arrow-left"></i> Back
+                  </a>
+
+                  <button id="addpatient" class="btn btn-default btn-modern" type="button" style="margin-left:10px;">
+                    <i class="fa fa-plus"></i> Add Doctor
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel table-card">
+            <div class="table-card-head">
+              <div>
+                <h4><i class="fa fa-table"></i> Doctor List</h4>
+                <div class="table-hint">Use search to quickly find doctors.</div>
+              </div>
+            </div>
+
+            <div class="panel-body" style="padding: 16px;">
+              <div class="table-responsive">
+                <table id="datatable4" class="table table-striped table-hover" style="width:100%;">
+                  <thead>
+                    <tr>
+                      <th style="width:25%">First Name</th>
+                      <th style="width:25%">Last Name</th>
+                      <th style="width:30%">Address</th>
+                      <th style="width:15%">Phone Number</th>
+                      <th style="width:2%"></th>
+                      <th style="width:3%"></th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; Hospital Management System</span>
+  </footer>
+</div>
+
+<div id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" data-dismiss="modal" aria-label="Close" class="close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 id="myModalLabel" class="modal-title"><i class="fa fa-user-md"></i> Doctor</h4>
+      </div>
+
+      <div class="modal-body" style="padding:18px;">
+        <form data-parsley-validate="" novalidate="" class="form-horizontal" id="detailform">
+
+          <div class="form-group">
+            <label class="col-lg-3 control-label">First Name</label>
+            <div class="col-lg-9">
+              <input required type="text" name="doc_first_name" class="form-control" placeholder="First Name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Last Name</label>
+            <div class="col-lg-9">
+              <input required type="text" name="doc_last_name" class="form-control" placeholder="Last Name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Phone Number</label>
+            <div class="col-lg-9">
+              <input required name="doc_ph_no" type="text" class="form-control" placeholder="Phone Number">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Address</label>
+            <div class="col-lg-9">
+              <textarea required name="doc_address" class="form-control" placeholder="Address" rows="3"></textarea>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-default" style="border-radius:12px; font-weight:900;">
+          Close
+        </button>
+        <button id="savethepatient" type="button" class="btn btn-primary" style="border-radius:12px; font-weight:900;">
+          <i class="fa fa-save"></i> Save changes
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =============== VENDOR SCRIPTS ===============-->
+<script src="vendor/modernizr/modernizr.custom.js"></script>
+<script src="vendor/jquery/dist/jquery.js"></script>
+<script src="vendor/bootstrap/dist/js/bootstrap.js"></script>
+
+<!-- DATATABLES -->
+<script src="vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="vendor/datatables-colvis/js/dataTables.colVis.js"></script>
+<script src="vendor/datatables/media/js/dataTables.bootstrap.js"></script>
+
+<script src="vendor/serialize/jquery.serializejson.js"></script>
+<script src="vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+<script src="vendor/jquery.easing/js/jquery.easing.js"></script>
+<script src="vendor/animo.js/animo.js"></script>
+<script src="vendor/parsley/parsley.min.js"></script>
+<script src="vendor/sweetalert/dist/sweetalert.min.js"></script>
+<script src="vendor/jquery-localize-i18n/dist/jquery.localize.js"></script>
+
+<script src="app/js/app.js"></script>
+
+<!-- Doctor logic -->
+<script src="js/doctor.js"></script>
+
+</body>
+</html>

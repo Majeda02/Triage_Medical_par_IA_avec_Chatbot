@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="description" content="Bootstrap Admin App + jQuery">
+  <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+  
+
+  <title>Hospital Management System - Chatbot</title>
+  <link rel="icon" type="image/png" href="app/img/favicon.png">
+
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="vendor/animate.css/animate.min.css">
+  <link rel="stylesheet" href="vendor/whirl/dist/whirl.css">
+
+  <link rel="stylesheet" href="app/css/bootstrap.css" id="bscss">
+  <link rel="stylesheet" href="app/css/app.css" id="maincss">
+
+  <style>
+    a:hover { text-decoration: none !important; }
+    .page-bg{
+      background: linear-gradient(135deg, #eff6ff 0%, #ecfdf5 100%);
+      min-height: calc(100vh - 115px);
+      padding: 18px 0 26px;
+    }
+    .hero-panel {
+      border: 0 !important;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    .hero-top {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #22c55e 0%, #2563eb 100%);
+      color: #fff;
+      position: relative;
+      z-index: 0;
+    }
+    .hero-top:after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:220px;
+      height:220px;
+      background: radial-gradient(circle, rgba(255,255,255,.25), transparent 60%);
+      transform: rotate(20deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-title{ margin:0; font-weight: 900; letter-spacing: .2px; }
+    .hero-sub{ margin: 6px 0 0; opacity: .92; }
+    .hero-actions{ margin-top: 6px; text-align: right; }
+
+    .btn-back-big{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 18px !important;
+      font-size: 16px !important;
+      font-weight: 900 !important;
+      border-radius: 14px !important;
+      background: #1d4ed8 !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,.35) !important;
+      box-shadow: 0 12px 22px rgba(29,78,216,.28);
+    }
+    .btn-back-big:hover,
+    .btn-back-big:focus{
+      background: #1e40af !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+
+    .card-soft{
+      border:0 !important;
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      overflow: hidden;
+      background:#fff;
+    }
+
+    .chat-header {
+      background: #1e88e5;
+      color: #fff;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-header .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 18px;
+    }
+    .chat-header h4 { margin: 0; font-weight: 900; }
+    .chat-header small { color: rgba(255,255,255,.85); }
+
+    .chat-body {
+      height: 360px;
+      overflow-y: auto;
+      padding: 18px;
+      background: #ffffff;
+    }
+    .msg-row { display:flex; margin-bottom: 12px; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-bubble {
+      max-width: 78%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      line-height: 1.35;
+      font-size: 14px;
+      word-break: break-word;
+    }
+    .msg-bubble.bot {
+      background: #f2f4f7;
+      color: #111827;
+      border-top-left-radius: 6px;
+    }
+    .msg-bubble.user {
+      background: #1e88e5;
+      color: #fff;
+      border-top-right-radius: 6px;
+    }
+
+    .chat-input {
+      border-top: 1px solid #e5e7eb;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .choice-btn {
+      width: 100%;
+      padding: 12px 10px;
+      font-weight: 800;
+      border-radius: 10px;
+    }
+    .analyze-btn {
+      width: 100%;
+      padding: 14px 12px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .summary-card {
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      background: #fff;
+      padding: 16px;
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 120px);
+      overflow: auto;
+    }
+    .summary-item {
+      background: #f8fafc;
+      border: 1px solid #eef2f7;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .summary-item .label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+    .summary-item .value {
+      font-size: 14px;
+      font-weight: 900;
+      color: #111827;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+
+    .progress-wrap { margin-bottom: 12px; }
+    .progress-label { display:flex; justify-content:space-between; font-size: 12px; color:#6b7280; margin-bottom:6px; }
+    .progress { height: 8px; border-radius: 999px; margin-bottom: 0; }
+    .progress-bar { border-radius: 999px; }
+
+    .badge-pill {
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .badge-warn { background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; }
+  </style>
+</head>
+
+<body class="layout-h">
+<div class="wrapper">
+  <header class="topbar">
+  <div class="container-fluid">
+    <a href="index.html" class="brand-logo">
+      <img src="app/img/logo.png" class="brand-icon" alt="Hospital Management System">
+      <div class="brand-text">
+        <div class="brand-title">
+          <span class="t-blue">Hospital</span>
+          <span class="t-green">Management</span>
+          <span class="t-gray">System</span>
+        </div>
+        <div class="brand-sub">AI Health Assessment &amp; Triage</div>
+      </div>
+    </a>
+  </div>
+</header>
+
+
+  <section>
+    <div class="content-wrapper">
+      <div class="page-bg">
+        <div class="container-fluid">
+
+          <div class="panel hero-panel">
+            <div class="hero-top">
+              <div class="row">
+                <div class="col-sm-7">
+                  <h2 class="hero-title"><i class="fa fa-comments"></i> AI Health Assessment</h2>
+                  <p class="hero-sub">Triage assistant (Urgent / Semi-urgent / Emergent)</p>
+                </div>
+                <div class="col-sm-5 hero-actions">
+                  <a href="index.html" class="btn btn-back-big">
+                    <i class="fa fa-arrow-left"></i> Back
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card-soft">
+                <div class="chat-header">
+                  <div class="avatar"><i class="fa fa-commenting-o"></i></div>
+                  <div>
+                    <h4>AI Medical Assistant</h4>
+                    <small>Answer all fields used by the ML model</small>
+                  </div>
+                </div>
+
+                <div id="chatBody" class="chat-body"></div>
+
+                <div class="chat-input">
+                  <div id="controls"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="summary-card">
+                <h4 style="margin-top:0;margin-bottom:12px;font-weight:900;">Patient Summary</h4>
+
+                <div class="progress-wrap">
+                  <div class="progress-label">
+                    <span>Progress</span>
+                    <span id="progressText">Step 1</span>
+                  </div>
+                  <div class="progress">
+                    <div id="progressBar" class="progress-bar progress-bar-info" role="progressbar" style="width:0%"></div>
+                  </div>
+                </div>
+
+                <div id="summary"></div>
+
+                <div id="conditionsWrap" style="display:none; border-top:1px solid #e5e7eb; padding-top:12px; margin-top:10px;">
+                  <div class="label" style="margin-bottom:8px; color:#6b7280; font-size:12px;">Conditions (Yes)</div>
+                  <div id="conditions"></div>
+                </div>
+
+                <div id="resultWrap" style="display:none; margin-top:14px;">
+                  <div class="summary-item">
+                    <div class="label">Prediction</div>
+                    <div class="value"><i class="fa fa-stethoscope"></i> <span id="predLabel">—</span></div>
+                    <div style="margin-top:8px;color:#6b7280;font-size:12px;">
+                      Prediction from Flask ML API.
+                    </div>
+                  </div>
+                  <div id="exportWrap" style="display:none; margin-top:12px;">
+                      <button id="btnExportAnalyseCsv" class="btn btn-warning" style="width:100%;border-radius:12px;font-weight:900;margin-bottom:8px;">
+                        <i class="fa fa-download"></i> Exporter l’analyse (CSV)
+                      </button>
+                      <button id="btnExportAnalysePdf" class="btn btn-danger" style="width:100%;border-radius:12px;font-weight:900;">
+                        <i class="fa fa-file-pdf-o"></i> Exporter l’analyse (PDF)
+                      </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; Hospital Management System</span>
+  </footer>
+
+</div>
+
+<script src="vendor/modernizr/modernizr.custom.js"></script>
+<script src="vendor/jquery/dist/jquery.js"></script>
+<script src="vendor/bootstrap/dist/js/bootstrap.js"></script>
+<script src="vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+<script src="vendor/jquery.easing/js/jquery.easing.js"></script>
+<script src="vendor/animo.js/animo.js"></script>
+<script src="vendor/jquery-localize-i18n/dist/jquery.localize.js"></script>
+<script src="app/js/app.js"></script>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const pat_id = params.get("pat_id");
+  const pat_name = params.get("pat_name") || "";
+
+
+  var step = 0;
+
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  var RACES = ["White","Black","Other"];
+  var PAIN = ["Unknown","Blank","0.0","1.0","2.0","3.0","4.0","5.0","6.0","7.0","8.0","9.0","10.0"];
+
+  var CONDITIONS = [
+    { col: "is_patient_suffer_alzheimar", label: "Alzheimer" },
+    { col: "is_patient_suffer_cancer", label: "Cancer" },
+    { col: "is_patient_suffer_cerebrovascular", label: "Cerebrovascular" },
+    { col: "is_patient_suffer_chronic_kidney", label: "Chronic kidney disease" },
+    { col: "is_patient_suffer_chronic_obstructive_pulmonary", label: "COPD" },
+    { col: "is_patient_suffer_congestive_heart_failure", label: "Congestive heart failure" },
+    { col: "is_patient_suffer_coronary_artery", label: "Coronary artery disease" },
+    { col: "is_patient_suffer_depression", label: "Depression" },
+    { col: "is_patient_suffer_diabet_L0", label: "Diabetes (L0)" },
+    { col: "is_patient_suffer_diabet_L1", label: "Diabetes (L1)" },
+    { col: "is_patient_suffer_diabet_L2", label: "Diabetes (L2)" },
+    { col: "is_patient_suffer_renal_insufficiency", label: "Renal insufficiency" },
+    { col: "is_patient_suffer_pulmonary_embolism", label: "Pulmonary embolism" },
+    { col: "is_patient_suffer_HIV_infection", label: "HIV infection" },
+    { col: "is_patient_suffer_high_cholesterol", label: "High cholesterol" },
+    { col: "is_patient_suffer_hyper_tension", label: "Hypertension" },
+    { col: "is_patient_suffer_obesity", label: "Obesity" },
+    { col: "is_patient_suffer_apnea", label: "Sleep apnea" },
+    { col: "is_patient_suffer_osteoporosis", label: "Osteoporosis" }
+  ];
+
+  var patientData = {
+    pat_id: pat_id || null,
+    month_visit: "",
+    day_visit: "",
+    year_visit: "2026", 
+    is_arrival_ambulance: "",
+    ambulance_time: "",
+
+    patient_age: "",
+    patient_sexe: "",
+    patient_race: "",
+
+    heart_rate_signal: "",
+    temperature_signal: "",   
+    respiratory_rate_signal: "",
+    blood_pressure_systolic_signal: "",
+    blood_pressure_diastolic_signal: "",
+    pulse_oximetry_signal: "",
+
+    patient_pain_category: "",
+    is_patient_seen_before_72h: "",
+    patient_alchol_level: ""
+  };
+
+  CONDITIONS.forEach(function(c){ patientData[c.col] = "No"; });
+
+ 
+  var questions = [
+    { field: "month_visit", question: "Select month of visit.", type: "select", options: MONTHS, icon: "fa-calendar" },
+    { field: "day_visit", question: "Select day of week of visit.", type: "select", options: DAYS, icon: "fa-calendar-o" },
+    { field: "year_visit", question: "Year of visit.", type: "number", icon: "fa-calendar-check-o" },
+
+    { field: "is_arrival_ambulance", question: "Arrival by ambulance?", type: "boolean", icon: "fa-ambulance" },
+    { field: "ambulance_time", question: "Ambulance time (minutes). If unknown, leave empty.", type: "number_optional", icon: "fa-clock-o" },
+
+    { field: "patient_age", question: "Patient age (years).", type: "number", icon: "fa-user" },
+    { field: "patient_sexe", question: "Select biological sex.", type: "select", options: ["Male","Female"], icon: "fa-venus-mars" },
+    { field: "patient_race", question: "Select race.", type: "select", options: RACES, icon: "fa-users" },
+
+    { field: "heart_rate_signal", question: "Heart rate (bpm).", type: "number", icon: "fa-heartbeat" },
+    { field: "temperature_signal", question: "Body temperature in °F (example: 98.6).", type: "number", icon: "fa-thermometer-half" },
+    { field: "respiratory_rate_signal", question: "Respiratory rate (breaths/min).", type: "number", icon: "fa-leaf" },
+    { field: "blood_pressure_systolic_signal", question: "Systolic blood pressure (top number).", type: "number", icon: "fa-tint" },
+    { field: "blood_pressure_diastolic_signal", question: "Diastolic blood pressure (bottom number).", type: "number", icon: "fa-tint" },
+    { field: "pulse_oximetry_signal", question: "Pulse oximetry SpO2 (%) (example: 97).", type: "number", icon: "fa-odnoklassniki" },
+
+    { field: "patient_pain_category", question: "Pain category (0.0 to 10.0, or Unknown/Blank).", type: "select", options: PAIN, icon: "fa-bolt" },
+    { field: "is_patient_seen_before_72h", question: "Was the patient seen before within 72 hours?", type: "boolean", icon: "fa-history" },
+    { field: "patient_alchol_level", question: "Alcohol level present?", type: "boolean", icon: "fa-glass" }
+  ];
+
+  CONDITIONS.forEach(function(c){
+    questions.push({
+      field: c.col,
+      question: "Condition: " + c.label + " ?",
+      type: "boolean",
+      icon: "fa-medkit"
+    });
+  });
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function addMessage(type, text) {
+    var $chat = $('#chatBody');
+    var rowClass = type === 'user' ? 'msg-row user' : 'msg-row bot';
+    var bubbleClass = type === 'user' ? 'msg-bubble user' : 'msg-bubble bot';
+    $chat.append('<div class="'+rowClass+'"><div class="'+bubbleClass+'">'+escapeHtml(text)+'</div></div>');
+    $chat.scrollTop($chat[0].scrollHeight);
+  }
+
+  function toNumberOrNull(v){
+    if (v === null || v === undefined) return null;
+    var s = String(v).trim();
+    if (!s) return null;
+    var n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function validateInputs(){
+    var tF = toNumberOrNull(patientData.temperature_signal);
+    if (tF !== null && (tF < 85 || tF > 110)) {
+      addMessage('bot', "⚠️ Temperature must be in °F (typical 95–105). You likely typed °C.");
+      return false;
+    }
+    return true;
+  }
+
+  function buildApiPayload(){
+   
+    return JSON.parse(JSON.stringify(patientData));
+  }
+
+  function renderControls() {
+    var q = questions[step];
+    var $controls = $('#controls');
+    $controls.empty();
+
+    var shown = Math.min(step + 1, questions.length);
+    $('#progressText').text('Step ' + shown + ' of ' + questions.length);
+    $('#progressBar').css('width', ((shown / questions.length) * 100) + '%');
+
+    if (!q) {
+      $controls.html(
+        '<button class="btn btn-primary analyze-btn" id="analyzeBtn">' +
+          '<i class="fa fa-line-chart"></i> Analyze Patient Status' +
+        '</button>'
+      );
+
+      $('#analyzeBtn').on('click', function() {
+        if (!validateInputs()) return;
+
+        addMessage('bot', 'Analyzing...');
+        var payload = buildApiPayload();
+        console.log("SENDING PAYLOAD:", payload);
+
+        $.ajax({
+          url: '/api/triage/predict',
+          method: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          timeout: 20000,
+          data: JSON.stringify(payload),
+          success: function(res) {
+            $('#predLabel').text(res.label);
+            $('#resultWrap').show();
+
+            $('#exportWrap').show();
+
+            var msg = 'Assessment complete. Predicted status: ' + res.label + '.';
+            
+            window.__lastPredictRes = res;
+            window.__lastPredictPayload = payload;
+            addMessage('bot', msg);
+          },
+
+          error: function(xhr) {
+            console.error("STATUS:", xhr.status);
+            console.error("RESPONSE:", xhr.responseText);
+            addMessage('bot', 'API Error ('+xhr.status+'): ' + (xhr.responseText || 'No response. Check Flask logs.'));
+          }
+        });
+      });
+
+      return;
+    }
+
+    if (q.type === 'select') {
+      var html = '<div class="input-group">' +
+        '<span class="input-group-addon"><i class="fa '+q.icon+'"></i></span>' +
+        '<select id="answerSelect" class="form-control">' +
+          '<option value="">-- Select --</option>';
+
+      q.options.forEach(function(opt){
+        html += '<option value="'+escapeHtml(opt)+'">'+escapeHtml(opt)+'</option>';
+      });
+
+      html += '</select>' +
+        '<span class="input-group-btn">' +
+          '<button id="sendBtn" class="btn btn-primary" type="button"><i class="fa fa-paper-plane"></i></button>' +
+        '</span>' +
+      '</div>';
+
+      $controls.html(html);
+
+      $('#sendBtn').on('click', function() { handleSend($('#answerSelect').val()); });
+      $('#answerSelect').on('keypress', function(e) { if (e.which === 13) handleSend($('#answerSelect').val()); });
+      setTimeout(function(){ $('#answerSelect').focus(); }, 50);
+      return;
+    }
+
+    if (q.type === 'boolean') {
+      $controls.html(
+        '<div class="row">' +
+          '<div class="col-xs-6"><button class="btn btn-success choice-btn" data-value="Yes"><i class="fa fa-check"></i> Yes</button></div>' +
+          '<div class="col-xs-6"><button class="btn btn-default choice-btn" data-value="No"><i class="fa fa-times"></i> No</button></div>' +
+        '</div>'
+      );
+      $controls.find('button').on('click', function() { handleSend($(this).data('value')); });
+      return;
+    }
+
+    var typeAttr = 'number';
+    $controls.html(
+      '<div class="input-group">' +
+        '<span class="input-group-addon"><i class="fa '+q.icon+'"></i></span>' +
+        '<input id="answerInput" type="'+typeAttr+'" class="form-control" placeholder="Enter value..." />' +
+        '<span class="input-group-btn">' +
+          '<button id="sendBtn" class="btn btn-primary" type="button"><i class="fa fa-paper-plane"></i></button>' +
+        '</span>' +
+      '</div>' +
+      (q.type === "number_optional" ? '<small style="display:block;margin-top:6px;color:#6b7280;">Optional field: you can leave it empty.</small>' : '')
+    );
+
+    $('#sendBtn').on('click', function() { handleSend($('#answerInput').val()); });
+    $('#answerInput').on('keypress', function(e) { if (e.which === 13) handleSend($('#answerInput').val()); });
+    setTimeout(function(){ $('#answerInput').focus(); }, 50);
+  }
+
+  function updateSummary() {
+    var $sum = $('#summary');
+    $sum.empty();
+
+    function item(label, value, icon) {
+      return '<div class="summary-item"><div class="label">'+label+'</div><div class="value"><i class="fa '+icon+'"></i> '+escapeHtml(value)+'</div></div>';
+    }
+
+    if (patientData.month_visit) $sum.append(item('Month', patientData.month_visit, 'fa-calendar'));
+    if (patientData.day_visit) $sum.append(item('Day', patientData.day_visit, 'fa-calendar-o'));
+    if (patientData.year_visit) $sum.append(item('Year', patientData.year_visit, 'fa-calendar-check-o'));
+
+    if (patientData.is_arrival_ambulance) $sum.append(item('Arrival by ambulance', patientData.is_arrival_ambulance, 'fa-ambulance'));
+    if (patientData.ambulance_time) $sum.append(item('Ambulance time', patientData.ambulance_time + ' min', 'fa-clock-o'));
+
+    if (patientData.patient_age) $sum.append(item('Age', patientData.patient_age + ' years', 'fa-user'));
+    if (patientData.patient_sexe) $sum.append(item('Sex', patientData.patient_sexe, 'fa-venus-mars'));
+    if (patientData.patient_race) $sum.append(item('Race', patientData.patient_race, 'fa-users'));
+
+    if (patientData.heart_rate_signal) $sum.append(item('Heart rate', patientData.heart_rate_signal + ' bpm', 'fa-heartbeat'));
+    if (patientData.temperature_signal) $sum.append(item('Temperature', patientData.temperature_signal + ' °F', 'fa-thermometer-half'));
+    if (patientData.respiratory_rate_signal) $sum.append(item('Respiratory rate', patientData.respiratory_rate_signal + ' /min', 'fa-leaf'));
+    if (patientData.blood_pressure_systolic_signal && patientData.blood_pressure_diastolic_signal)
+      $sum.append(item('Blood pressure', patientData.blood_pressure_systolic_signal + '/' + patientData.blood_pressure_diastolic_signal, 'fa-tint'));
+    if (patientData.pulse_oximetry_signal) $sum.append(item('SpO2', patientData.pulse_oximetry_signal + ' %', 'fa-odnoklassniki'));
+
+    if (patientData.patient_pain_category) $sum.append(item('Pain', patientData.patient_pain_category, 'fa-bolt'));
+    if (patientData.is_patient_seen_before_72h) $sum.append(item('Seen before 72h', patientData.is_patient_seen_before_72h, 'fa-history'));
+    if (patientData.patient_alchol_level) $sum.append(item('Alcohol level', patientData.patient_alchol_level, 'fa-glass'));
+
+    var yesConds = [];
+    CONDITIONS.forEach(function(c){
+      if (patientData[c.col] === "Yes") yesConds.push(c.label);
+    });
+
+    if (yesConds.length) {
+      $('#conditionsWrap').show();
+      $('#conditions').html(yesConds.map(function(x){
+        return '<span class="badge-pill badge-warn"><i class="fa fa-exclamation-circle"></i> '+escapeHtml(x)+'</span>';
+      }).join(''));
+    } else {
+      $('#conditionsWrap').hide();
+      $('#conditions').empty();
+    }
+  }
+
+  function handleSend(val) {
+    var q = questions[step];
+    if (!q) return;
+
+    var value = (val === null || val === undefined) ? "" : String(val).trim();
+
+    if (!value && q.type !== 'boolean' && q.type !== "number_optional") return;
+
+    addMessage('user', value || "(empty)");
+
+    patientData[q.field] = (q.type === "boolean") ? (value === "Yes" ? "Yes" : "No") : value;
+
+    updateSummary();
+
+    if (step < questions.length - 1) {
+      step += 1;
+      setTimeout(function() {
+        addMessage('bot', questions[step].question);
+        renderControls();
+      }, 200);
+    } else {
+      step += 1;
+      setTimeout(function() {
+        addMessage('bot', "All fields collected. Click below to get triage prediction.");
+        renderControls();
+      }, 200);
+    }
+  }
+
+  $(function(){
+    addMessage('bot', "Welcome. This assistant collects all model input fields for triage prediction.");
+    addMessage('bot', "Please answer step by step.");
+    addMessage('bot', questions[0].question);
+    renderControls();
+    updateSummary();
+  });
+
+
+function safeFilePart(s){
+  return String(s || "")
+    .trim()
+    .replace(/[\\/:*?"<>|]+/g, "_")
+    .replace(/\s+/g, "_")
+    .slice(0, 60);
+}
+
+function downloadTextFile(filename, content, mime="text/csv;charset=utf-8"){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function buildLocalCsvReport(p, res, patientName){
+  const V = (v) => (v === null || v === undefined || String(v).trim() === "") ? "" : String(v);
+  const yn = (v) => String(v).toLowerCase() === "yes" ? "Yes" : "No";
+
+  const lines = [];
+  lines.push("TRIAGE MEDICAL REPORT");
+  lines.push(`Patient Name,${V(patientName)}`);
+  lines.push(`Exported At,${new Date().toLocaleString()}`);
+  lines.push(`Predicted Status,${V(res?.label)}`);
+  lines.push("");
+
+  lines.push("VISIT INFORMATION");
+  lines.push(`Month,${V(p?.month_visit)}`);
+  lines.push(`Day,${V(p?.day_visit)}`);
+  lines.push(`Year,${V(p?.year_visit)}`);
+  lines.push(`Arrival by ambulance,${yn(p?.is_arrival_ambulance)}`);
+  lines.push(`Ambulance time (minutes),${V(p?.ambulance_time)}`);
+  lines.push("");
+
+  lines.push("PATIENT INFORMATION");
+  lines.push(`Age (years),${V(p?.patient_age)}`);
+  lines.push(`Sex,${V(p?.patient_sexe)}`);
+  lines.push(`Race,${V(p?.patient_race)}`);
+  lines.push(`Pain category,${V(p?.patient_pain_category)}`);
+  lines.push(`Seen before within 72 hours,${yn(p?.is_patient_seen_before_72h)}`);
+  lines.push(`Alcohol level present,${yn(p?.patient_alchol_level)}`);
+  lines.push("");
+
+  lines.push("VITAL SIGNS");
+  lines.push(`Heart rate (bpm),${V(p?.heart_rate_signal)}`);
+  lines.push(`Temperature (F),${V(p?.temperature_signal)}`);
+  lines.push(`Respiratory rate (breaths/min),${V(p?.respiratory_rate_signal)}`);
+  lines.push(`Systolic blood pressure,${V(p?.blood_pressure_systolic_signal)}`);
+  lines.push(`Diastolic blood pressure,${V(p?.blood_pressure_diastolic_signal)}`);
+  lines.push(`SpO2 (%),${V(p?.pulse_oximetry_signal)}`);
+  lines.push("");
+
+  lines.push("REPORTED CONDITIONS");
+  (window.CONDITIONS || []).forEach(c=>{
+    lines.push(`${c.label},${yn(p?.[c.col])}`);
+  });
+
+  return lines.join("\n");
+}
+
+$('#btnExportAnalyseCsv').on('click', function () {
+  const res = window.__lastPredictRes;
+  const payload = window.__lastPredictPayload;
+
+  const patientName = (typeof pat_name !== "undefined" ? pat_name : "") || "";
+
+  if (pat_id) {
+    window.location.href =
+      "/api/patient/" + encodeURIComponent(pat_id) +
+      "/triage-export.csv?patient_name=" + encodeURIComponent(patientName);
+    return;
+  }
+
+  if (!res || !payload) {
+    alert("No analysis found. Run prediction first.");
+    return;
+  }
+
+  const fnameBase = safeFilePart(patientName) || "patient";
+  const csv = buildLocalCsvReport(payload, res, patientName);
+  downloadTextFile(`triage_report_${fnameBase}.csv`, csv);
+});
+
+
+$('#btnExportAnalysePdf').on('click', function () {
+  const res = window.__lastPredictRes;
+  const p = window.__lastPredictPayload;
+
+  if (!res || !p) {
+    alert("No analysis found. Run prediction first.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const V = v => (!v || String(v).trim()==="") ? "—" : v;
+  const YN = v => String(v).toLowerCase()==="yes" ? "Yes" : "No";
+
+  let y = 16;
+
+  doc.setFontSize(16);
+  doc.text("TRIAGE MEDICAL REPORT", 14, y);
+  y+=10;
+
+  doc.setFontSize(11);
+  doc.text(`Patient Name: ${V(pat_name)}`,14,y); y+=6;
+  doc.text(`Exported at: ${new Date().toLocaleString()}`,14,y); y+=6;
+  doc.text(`Predicted status: ${res.label}`,14,y); y+=10;
+
+  function section(title){
+    doc.setFontSize(12);
+    doc.text(title,14,y); y+=6;
+  }
+  function field(label,val){
+    doc.setFontSize(10);
+    doc.text(`${label}: ${val}`,16,y); y+=5;
+  }
+
+  section("VISIT INFORMATION");
+  field("Month", V(p.month_visit));
+  field("Day", V(p.day_visit));
+  field("Year", V(p.year_visit));
+  field("Arrival by ambulance", YN(p.is_arrival_ambulance));
+  field("Ambulance time", V(p.ambulance_time));
+  y+=6;
+
+  section("PATIENT INFORMATION");
+  field("Age", p.patient_age?`${p.patient_age} years`:"—");
+  field("Sex", V(p.patient_sexe));
+  field("Race", V(p.patient_race));
+  field("Pain category", V(p.patient_pain_category));
+  field("Seen before within 72h", YN(p.is_patient_seen_before_72h));
+  field("Alcohol level present", YN(p.patient_alchol_level));
+  y+=6;
+
+  section("VITAL SIGNS");
+  field("Heart rate", p.heart_rate_signal?`${p.heart_rate_signal} bpm`:"—");
+  field("Temperature", p.temperature_signal?`${p.temperature_signal} °F`:"—");
+  field("Respiratory rate", p.respiratory_rate_signal?`${p.respiratory_rate_signal} /min`:"—");
+  field("Blood pressure", (p.blood_pressure_systolic_signal && p.blood_pressure_diastolic_signal)
+    ? `${p.blood_pressure_systolic_signal}/${p.blood_pressure_diastolic_signal}`:"—");
+  field("SpO2", p.pulse_oximetry_signal?`${p.pulse_oximetry_signal} %`:"—");
+  y+=6;
+
+  section("REPORTED CONDITIONS");
+  CONDITIONS.forEach(c=>{
+    field(c.label, YN(p[c.col]));
+  });
+
+  doc.save(`triage_report_${p.pat_id||"unknown"}.pdf`);
+});
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+</body>
+</html>
