@@ -42,6 +42,7 @@ Le triage manuel peut être **chronophage**, **non standardisé** et dépend for
 - Mr. NAIT MALEK Yousef  
 
 **Master :** MDSIE–TEE (ENS Marrakech, Université Cadi Ayyad) 
+
 **Module :** Intelligence artificielle avancée
 
 **Année universitaire :** 2025–2026  
